@@ -39,8 +39,7 @@ public class RestUtils {
 
         ResponseEntity<CrazyAirResponse[]> responseEntity = restTemplate.exchange(crazyAirUrl,
                 HttpMethod.GET, new HttpEntity<>(crazyAirRequest), CrazyAirResponse[].class);
-        if (responseEntity == null)
-        {
+        if (responseEntity == null) {
             logger.error("Invalid response from " + crazyAirUrl);
             return null;
         }
@@ -57,8 +56,7 @@ public class RestUtils {
             logger.debug("Making call request for " + toughJetUrl);
         }
         ResponseEntity<ToughJetResponse[]> responseEntity = restTemplate.exchange(toughJetUrl, HttpMethod.GET, new HttpEntity<>(toughJetRequest), ToughJetResponse[].class);
-        if (responseEntity == null)
-        {
+        if (responseEntity == null) {
             logger.error("Invalid response from " + toughJetUrl);
             return null;
         }

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(
-        value = "/ticket",
+        value = "/flights",
         produces = {MediaType.APPLICATION_JSON_VALUE})
 public class HealthCheckController {
 

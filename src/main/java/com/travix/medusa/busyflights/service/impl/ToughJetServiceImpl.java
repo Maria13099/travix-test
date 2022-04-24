@@ -40,17 +40,17 @@ public class ToughJetServiceImpl implements ToughJetService {
         return Arrays.stream(toughJetResponse).map(response -> mapToughJetResponseIntoBusyFlightResponse(response)).collect(Collectors.toList());
     }
 
-    public ToughJetRequest mapBusyFlightReqIntoToughJetReq(BusyFlightsRequest busyFlightsRequest) {
+    public static ToughJetRequest mapBusyFlightReqIntoToughJetReq(BusyFlightsRequest busyFlightsRequest) {
         ToughJetRequest toughJetRequest = new ToughJetRequest();
         toughJetRequest.setFrom(busyFlightsRequest.getOrigin());
         toughJetRequest.setTo(busyFlightsRequest.getDestination());
-        toughJetRequest.setOutboundDate(busyFlightsRequest.getDestination());
+        toughJetRequest.setOutboundDate(busyFlightsRequest.getDepartureDate());
         toughJetRequest.setInboundDate(busyFlightsRequest.getReturnDate());
         toughJetRequest.setNumberOfAdults(busyFlightsRequest.getNumberOfPassengers());
         return toughJetRequest;
     }
 
-    public BusyFlightsResponse mapToughJetResponseIntoBusyFlightResponse(ToughJetResponse toughJetResponse) {
+    public static BusyFlightsResponse mapToughJetResponseIntoBusyFlightResponse(ToughJetResponse toughJetResponse) {
         BusyFlightsResponse busyFlightsResponse = new BusyFlightsResponse();
         busyFlightsResponse.setAirline(toughJetResponse.getCarrier());
         busyFlightsResponse.setSupplier("ToughJet");

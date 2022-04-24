@@ -2,7 +2,6 @@ package com.travix.medusa.busyflights.service.impl;
 
 import com.travix.medusa.busyflights.domain.busyflights.BusyFlightsRequest;
 import com.travix.medusa.busyflights.domain.busyflights.BusyFlightsResponse;
-import com.travix.medusa.busyflights.domain.crazyair.CrazyAirResponse;
 import com.travix.medusa.busyflights.service.CrazyAirService;
 import com.travix.medusa.busyflights.service.ToughJetService;
 import org.junit.jupiter.api.Test;

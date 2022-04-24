@@ -40,7 +40,7 @@ public class CrazyAirServiceImpl implements CrazyAirService {
         return Arrays.stream(crazyAirResponse).map(response -> mapCrazyAirResponseIntoBusyFlightResponse(response)).collect(Collectors.toList());
     }
 
-    public CrazyAirRequest mapBusyFlightReqIntoCrazyAirReq(BusyFlightsRequest busyFlightsRequest) {
+    public static CrazyAirRequest mapBusyFlightReqIntoCrazyAirReq(BusyFlightsRequest busyFlightsRequest) {
         CrazyAirRequest crazyAirRequest = new CrazyAirRequest();
         crazyAirRequest.setOrigin(busyFlightsRequest.getOrigin());
         crazyAirRequest.setDestination(busyFlightsRequest.getDestination());
@@ -50,7 +50,7 @@ public class CrazyAirServiceImpl implements CrazyAirService {
         return crazyAirRequest;
     }
 
-    public BusyFlightsResponse mapCrazyAirResponseIntoBusyFlightResponse(CrazyAirResponse crazyAirResponse) {
+    public static BusyFlightsResponse mapCrazyAirResponseIntoBusyFlightResponse(CrazyAirResponse crazyAirResponse) {
         BusyFlightsResponse busyFlightsResponse = new BusyFlightsResponse();
         busyFlightsResponse.setAirline(crazyAirResponse.getAirline());
         busyFlightsResponse.setSupplier("CrazyAir");

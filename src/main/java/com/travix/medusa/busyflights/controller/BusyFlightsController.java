@@ -8,14 +8,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping(
-        value = "/",
         produces = {MediaType.APPLICATION_JSON_VALUE},
         consumes = {MediaType.APPLICATION_JSON_VALUE})
 public class BusyFlightsController {
@@ -28,24 +30,13 @@ public class BusyFlightsController {
         this.busyFlightsService = busyFlightsService;
     }
 
-//    @ExceptionHandler({ResourceNotFoundException.class})
-//    public void handleException() {
-//        //
-//    }
-
     @GetMapping("/flights")
     public ResponseEntity<List<BusyFlightsResponse>> getFlights(
             @Valid @RequestBody BusyFlightsRequest busyFlightsRequest) {
         if (logger.isDebugEnabled()) {
             logger.debug("Received BusyFlightsRequest ]" + busyFlightsRequest + "[");
         }
-
-        List<BusyFlightsResponse> busyFlightsResponse = busyFlightsService.getFlights(busyFlightsRequest);
-        if (busyFlightsResponse.size() == 0){
-            return new ResponseEntity<>(busyFlightsResponse, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(busyFlightsResponse, HttpStatus.OK);
-
+        return new ResponseEntity<>(busyFlightsService.getFlights(busyFlightsRequest), HttpStatus.OK);
     }
 }
 
