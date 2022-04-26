@@ -1,6 +1,8 @@
 package com.travix.medusa.busyflights.service.impl;
 
 import com.travix.medusa.busyflights.TestDataUtils;
+import com.travix.medusa.busyflights.converter.CrazyAirRequestConverter;
+import com.travix.medusa.busyflights.converter.CrazyAirResponseMappingFunction;
 import com.travix.medusa.busyflights.domain.busyflights.BusyFlightsRequest;
 import com.travix.medusa.busyflights.domain.busyflights.BusyFlightsResponse;
 import com.travix.medusa.busyflights.domain.crazyair.CrazyAirRequest;
@@ -22,7 +24,6 @@ class CrazyAirServiceImplTest {
 
     @Autowired
     public CrazyAirServiceImpl crazyAirService;
-
     @MockBean
     RestUtils restUtils;
 
@@ -43,27 +44,5 @@ class CrazyAirServiceImplTest {
         BusyFlightsRequest busyFlightsRequest = TestDataUtils.createBusyFlightsRequest();
         List<BusyFlightsResponse> busyFlightsResponseList = crazyAirService.getCrazyAirFlights(busyFlightsRequest);
         assertEquals(0, busyFlightsResponseList.size());
-    }
-
-    @Test
-    void testMapBusyFlightReqIntoCrazyAirReq() {
-        CrazyAirRequest crazyAirRequest = crazyAirService.mapBusyFlightReqIntoCrazyAirReq(TestDataUtils.createBusyFlightsRequest());
-        assertEquals("LHR",crazyAirRequest.getOrigin());
-        assertEquals("AMS",crazyAirRequest.getDestination());
-        assertEquals("2022-08-03",crazyAirRequest.getDepartureDate());
-        assertEquals("2022-08-27",crazyAirRequest.getReturnDate());
-        assertEquals(4,crazyAirRequest.getPassengerCount());
-    }
-
-    @Test
-    void testMapCrazyAirResponseIntoBusyFlightResponse() {
-        BusyFlightsResponse busyFlightsResponse = crazyAirService.mapCrazyAirResponseIntoBusyFlightResponse(TestDataUtils.createCrazyAirResponse());
-        assertEquals("CrazyAir",busyFlightsResponse.getSupplier());
-        assertEquals("British Airways",busyFlightsResponse.getAirline());
-        assertEquals(123,busyFlightsResponse.getFare());
-        assertEquals("LHR",busyFlightsResponse.getDepartureAirportCode());
-        assertEquals("AMS",busyFlightsResponse.getDestinationAirportCode());
-        assertEquals("2022-08-03",busyFlightsResponse.getDepartureDate());
-        assertEquals("2022-08-27",busyFlightsResponse.getArrivalDate());
     }
 }

@@ -1,8 +1,9 @@
 package com.travix.medusa.busyflights.service.impl;
 
+import com.travix.medusa.busyflights.converter.ToughJetRequestConverter;
+import com.travix.medusa.busyflights.converter.ToughJetResponseMappingFunction;
 import com.travix.medusa.busyflights.domain.busyflights.BusyFlightsRequest;
 import com.travix.medusa.busyflights.domain.busyflights.BusyFlightsResponse;
-import com.travix.medusa.busyflights.domain.toughjet.ToughJetRequest;
 import com.travix.medusa.busyflights.domain.toughjet.ToughJetResponse;
 import com.travix.medusa.busyflights.rest.RestUtils;
 import com.travix.medusa.busyflights.service.ToughJetService;
@@ -22,43 +23,26 @@ public class ToughJetServiceImpl implements ToughJetService {
 
     private final RestUtils restUtils;
 
-    public ToughJetServiceImpl(RestUtils restUtils) {
+    private final ToughJetRequestConverter toughJetRequestConverter;
+
+    private final ToughJetResponseMappingFunction toughJetResponseMappingFunction;
+
+    public ToughJetServiceImpl(RestUtils restUtils, ToughJetRequestConverter toughJetRequestConverter, ToughJetResponseMappingFunction toughJetResponseMappingFunction) {
         this.restUtils = restUtils;
+        this.toughJetRequestConverter = toughJetRequestConverter;
+        this.toughJetResponseMappingFunction = toughJetResponseMappingFunction;
     }
 
     @Override
     public List<BusyFlightsResponse> getToughJetFlights(BusyFlightsRequest busyFlightsRequest) {
-        ToughJetResponse[] toughJetResponse = restUtils.callToughJetUrl(mapBusyFlightReqIntoToughJetReq(busyFlightsRequest));
+        ToughJetResponse[] toughJetResponse = restUtils.callToughJetUrl(toughJetRequestConverter.convert(busyFlightsRequest));
         if (logger.isDebugEnabled()) {
             logger.debug("Received ToughJetResponse array ]" + toughJetResponse + "[");
         }
 
-        if (toughJetResponse == null)
-        {
+        if (toughJetResponse == null) {
             return new ArrayList<>();
         }
-        return Arrays.stream(toughJetResponse).map(response -> mapToughJetResponseIntoBusyFlightResponse(response)).collect(Collectors.toList());
-    }
-
-    public static ToughJetRequest mapBusyFlightReqIntoToughJetReq(BusyFlightsRequest busyFlightsRequest) {
-        ToughJetRequest toughJetRequest = new ToughJetRequest();
-        toughJetRequest.setFrom(busyFlightsRequest.getOrigin());
-        toughJetRequest.setTo(busyFlightsRequest.getDestination());
-        toughJetRequest.setOutboundDate(busyFlightsRequest.getDepartureDate());
-        toughJetRequest.setInboundDate(busyFlightsRequest.getReturnDate());
-        toughJetRequest.setNumberOfAdults(busyFlightsRequest.getNumberOfPassengers());
-        return toughJetRequest;
-    }
-
-    public static BusyFlightsResponse mapToughJetResponseIntoBusyFlightResponse(ToughJetResponse toughJetResponse) {
-        BusyFlightsResponse busyFlightsResponse = new BusyFlightsResponse();
-        busyFlightsResponse.setAirline(toughJetResponse.getCarrier());
-        busyFlightsResponse.setSupplier("ToughJet");
-        busyFlightsResponse.setFare(toughJetResponse.getBasePrice());
-        busyFlightsResponse.setDepartureAirportCode(toughJetResponse.getDepartureAirportName());
-        busyFlightsResponse.setDestinationAirportCode(toughJetResponse.getArrivalAirportName());
-        busyFlightsResponse.setDepartureDate(toughJetResponse.getOutboundDateTime());
-        busyFlightsResponse.setArrivalDate(toughJetResponse.getInboundDateTime());
-        return busyFlightsResponse;
+        return Arrays.stream(toughJetResponse).map(toughJetResponseMappingFunction).collect(Collectors.toList());
     }
 }

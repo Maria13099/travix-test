@@ -1,8 +1,9 @@
 package com.travix.medusa.busyflights.service.impl;
 
+import com.travix.medusa.busyflights.converter.CrazyAirRequestConverter;
+import com.travix.medusa.busyflights.converter.CrazyAirResponseMappingFunction;
 import com.travix.medusa.busyflights.domain.busyflights.BusyFlightsRequest;
 import com.travix.medusa.busyflights.domain.busyflights.BusyFlightsResponse;
-import com.travix.medusa.busyflights.domain.crazyair.CrazyAirRequest;
 import com.travix.medusa.busyflights.domain.crazyair.CrazyAirResponse;
 import com.travix.medusa.busyflights.rest.RestUtils;
 import com.travix.medusa.busyflights.service.CrazyAirService;
@@ -22,43 +23,26 @@ public class CrazyAirServiceImpl implements CrazyAirService {
 
     private final RestUtils restUtils;
 
-    public CrazyAirServiceImpl(RestUtils restUtils) {
+    private final CrazyAirRequestConverter crazyAirRequestConverter;
+
+    private final CrazyAirResponseMappingFunction crazyAirResponseMappingFunction;
+
+    public CrazyAirServiceImpl(RestUtils restUtils, CrazyAirRequestConverter crazyAirRequestConverter, CrazyAirResponseMappingFunction crazyAirResponseMappingFunction) {
         this.restUtils = restUtils;
+        this.crazyAirRequestConverter = crazyAirRequestConverter;
+        this.crazyAirResponseMappingFunction = crazyAirResponseMappingFunction;
     }
 
     @Override
     public List<BusyFlightsResponse> getCrazyAirFlights(BusyFlightsRequest busyFlightsRequest) {
-        CrazyAirResponse[] crazyAirResponse = restUtils.callCrazyAirUrl(mapBusyFlightReqIntoCrazyAirReq(busyFlightsRequest));
+        CrazyAirResponse[] crazyAirResponse = restUtils.callCrazyAirUrl(crazyAirRequestConverter.convert(busyFlightsRequest));
         if (logger.isDebugEnabled()) {
             logger.debug("Received CrazyAirResponse array ]" + crazyAirResponse + "[");
         }
 
-        if (crazyAirResponse == null)
-        {
+        if (crazyAirResponse == null) {
             return new ArrayList<>();
         }
-        return Arrays.stream(crazyAirResponse).map(response -> mapCrazyAirResponseIntoBusyFlightResponse(response)).collect(Collectors.toList());
-    }
-
-    public static CrazyAirRequest mapBusyFlightReqIntoCrazyAirReq(BusyFlightsRequest busyFlightsRequest) {
-        CrazyAirRequest crazyAirRequest = new CrazyAirRequest();
-        crazyAirRequest.setOrigin(busyFlightsRequest.getOrigin());
-        crazyAirRequest.setDestination(busyFlightsRequest.getDestination());
-        crazyAirRequest.setDepartureDate(busyFlightsRequest.getDepartureDate());
-        crazyAirRequest.setReturnDate(busyFlightsRequest.getReturnDate());
-        crazyAirRequest.setPassengerCount(busyFlightsRequest.getNumberOfPassengers());
-        return crazyAirRequest;
-    }
-
-    public static BusyFlightsResponse mapCrazyAirResponseIntoBusyFlightResponse(CrazyAirResponse crazyAirResponse) {
-        BusyFlightsResponse busyFlightsResponse = new BusyFlightsResponse();
-        busyFlightsResponse.setAirline(crazyAirResponse.getAirline());
-        busyFlightsResponse.setSupplier("CrazyAir");
-        busyFlightsResponse.setFare(crazyAirResponse.getPrice());
-        busyFlightsResponse.setDepartureAirportCode(crazyAirResponse.getDepartureAirportCode());
-        busyFlightsResponse.setDestinationAirportCode(crazyAirResponse.getDestinationAirportCode());
-        busyFlightsResponse.setDepartureDate(crazyAirResponse.getDepartureDate());
-        busyFlightsResponse.setArrivalDate(crazyAirResponse.getArrivalDate());
-        return busyFlightsResponse;
+        return Arrays.stream(crazyAirResponse).map(crazyAirResponseMappingFunction).collect(Collectors.toList());
     }
 }
